@@ -1,0 +1,28 @@
+{
+  "name": "status-reporter",
+  "version": "1.0.0",
+  "description": "A server for a status reporting app on mobile devices.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JohnStarich/status-reporter.git"
+  },
+  "keywords": [
+    "status",
+    "reporter"
+  ],
+  "author": "John Starich and James Williams VI",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JohnStarich/status-reporter/issues"
+  },
+  "homepage": "https://github.com/JohnStarich/status-reporter#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "request": "^2.83.0",
+    "request-promise": "^4.2.2"
+  }
+}
