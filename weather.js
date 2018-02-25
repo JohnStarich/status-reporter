@@ -1,6 +1,10 @@
 const request = require('request-promise')
 
-module.exports = function(lat, lon) {
+module.exports = function(params) {
+	let {lat, lon} = params
+	if (lat === undefined || lon === undefined) {
+		return {error: "Location information was not provided."}
+	}
 	queryParams = {
 		'q': `
 			select *

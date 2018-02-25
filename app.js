@@ -6,24 +6,20 @@ const app = express()
 
 
 app.get('/status', (req, res, next) => {
-	let lat = req.query.lat
-	let lon = req.query.lon
-	console.log("Lat", lat, "Lon", lon)
-
 	let tags = req.query.tags
 
 	const tagMappings = {
-		'server': [() => weather(lat, lon), time],
+		'server': [weather, time],
 		'time': [time],
 		'default': [
-			() => weather(lat, lon),
+			weather,
 			time
 		]
 	}
 
 	let resultFuncs = tagMappings[tags] !== undefined ? tagMappings[tags] : tagMappings['default']
 
-	resultFuncs = resultFuncs.map(r => r())
+	resultFuncs = resultFuncs.map(r => r(req.query))
 
 	Promise.all(resultFuncs)
 		.then(data => {
