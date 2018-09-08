@@ -8,7 +8,9 @@ module.exports = {
 		try {
 			plugin = require('./plugins/' + name)
 		} catch (err) {
-			console.log(`Error loading module: ./plugins/${name}`, err)
+			if (err.code !== 'MODULE_NOT_FOUND') {
+				console.log(`Error loading module: ./plugins/${name}`, err)
+			}
 		}
 		return plugin
 	},
