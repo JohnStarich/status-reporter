@@ -22,7 +22,7 @@ module.exports = {
 					return {error: err.message}
 				}
 				console.log("Error running module", name, err)
-				return {error: `Error running module '${name}': ${err.message}`}
+				return {error: `Error running module '${name}'`}
 			})
 	},
 
@@ -42,7 +42,7 @@ module.exports = {
 		let pluginOpts = {}
 		pluginOpts.location = () => {
 			if (config.permissions && config.permissions.location && config.permissions.location.includes(name)) {
-				return opts.location
+				return opts.location || {}
 			}
 			throw new Error(`${PermissionDenied}Module '${name}' does not have permission to access current location`)
 		}

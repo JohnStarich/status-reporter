@@ -7,7 +7,7 @@ module.exports = {
 	run(value, opts) {
 		let {lat, lon} = opts.location()
 		if (lat === undefined || lon === undefined) {
-			return {error: "Location information was invalid."}
+			return {error: "Location information was missing or invalid."}
 		}
 		queryParams = {
 			'q': `
