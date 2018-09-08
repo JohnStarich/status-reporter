@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/JohnStarich/status-reporter#readme",
   "dependencies": {
+    "config": "^2.0.1",
     "express": "^4.16.2",
     "request": "^2.83.0",
     "request-promise": "^4.2.2"

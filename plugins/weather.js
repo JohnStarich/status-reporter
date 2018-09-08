@@ -1,18 +1,13 @@
 const request = require('request-promise')
 
-const LocationNotProvided = {error: "Location information was not provided."}
-
 module.exports = {
 	location: true,
 	tags: ["weather", "temperature"],
 
 	run(value, opts) {
-		if (opts.location === undefined) {
-			return LocationNotProvided
-		}
-		let {lat, lon} = opts.location
+		let {lat, lon} = opts.location()
 		if (lat === undefined || lon === undefined) {
-			return LocationNotProvided
+			return {error: "Location information was invalid."}
 		}
 		queryParams = {
 			'q': `

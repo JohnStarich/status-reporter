@@ -1,3 +1,7 @@
+const config = require('config')
+
+const PermissionDenied = "Permission denied: "
+
 module.exports = {
 	load(name) {
 		let plugin
@@ -9,8 +13,15 @@ module.exports = {
 		return plugin
 	},
 
-	run() {
-		return Promise.resolve(module.exports._run(...arguments))
+	run(name) {
+		return new Promise(resolve => resolve(module.exports._run(...arguments)))
+			.catch(err => {
+				if (err.message.startsWith(PermissionDenied)) {
+					return {error: err.message}
+				}
+				console.log("Error running module", name, err)
+				return {error: `Error running module '${name}': ${err.message}`}
+			})
 	},
 
 	_run(name, value, opts) {
@@ -27,19 +38,12 @@ module.exports = {
 
 		opts = opts || {}
 		let pluginOpts = {}
-		// TODO change to config-based permissions
-		if (plugin.location === true) {
-			pluginOpts.location = opts.location
+		pluginOpts.location = () => {
+			if (config.permissions && config.permissions.location && config.permissions.location.includes(name)) {
+				return opts.location
+			}
+			throw new Error(`${PermissionDenied}Module '${name}' does not have permission to access current location`)
 		}
-		return module.exports._runWithPluginOpts(plugin, name, value, pluginOpts)
-	},
-
-	_runWithPluginOpts(plugin, name, value, opts) {
-		try {
-			return plugin.run(value, opts)
-		} catch (err) {
-			console.log(`Error running module: ${name}`, err)
-			return {error: `Error running module: ${name}`}
-		}
+		return plugin.run(value, pluginOpts)
 	},
 }
