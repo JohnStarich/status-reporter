@@ -1,16 +1,39 @@
 const config = require('config')
+const path = require('path')
+const fs = require('fs')
 
 const PermissionDenied = "Permission denied: "
 
 module.exports = {
+	_plugins: null,
+
+	init() {
+		let pluginPath = path.join(__dirname, "plugins")
+		module.exports._plugins = fs.readdirSync(pluginPath)
+			.filter(path => path.endsWith(".js"))
+			.map(path => path.slice(0, -3))
+			.reduce((acc, pluginName) => {
+				let file = "./plugins/" + pluginName
+				try {
+					acc[pluginName] = require(file)
+				} catch (err) {
+					if (err.code === 'MODULE_NOT_FOUND') {
+						throw err
+					}
+					console.log(`Error loading plugin: ${pluginName}\n`, err)
+					process.exit(1)
+				}
+				return acc
+			}, {})
+	},
+
 	load(name) {
-		let plugin
-		try {
-			plugin = require('./plugins/' + name)
-		} catch (err) {
-			if (err.code !== 'MODULE_NOT_FOUND') {
-				console.log(`Error loading module: ./plugins/${name}`, err)
-			}
+		if (module.exports._plugins === null) {
+			throw new Error('Plugin manager not initialized')
+		}
+		let plugin = module.exports._plugins[name];
+		if (plugin === undefined) {
+			throw new Error(`Plugin not found: ${name}`)
 		}
 		return plugin
 	},
@@ -47,5 +70,9 @@ module.exports = {
 			throw new Error(`${PermissionDenied}Module '${name}' does not have permission to access current location`)
 		}
 		return plugin.run(value, pluginOpts)
+	},
+
+	tags() {
+		return Object.keys(module.exports._plugins)
 	},
 }
